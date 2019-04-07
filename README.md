@@ -12,7 +12,7 @@ boto3
 Add line to `~/.bashrc` or `~/.bash_profile` etc.
 
 ```
-alias f-ssm='<path>/fetch-ssm.py'
+alias f-ssm='<path>/ssm_fetcher.py'
 ```
 
 ## Examples

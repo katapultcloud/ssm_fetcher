@@ -19,7 +19,7 @@ alias f-ssm='<path>/ssm_fetcher.py'
 
 ```
 $ f-ssm --help
-usage: ssm_fetcher.py [-h] [--json] [--profile PROFILE]
+usage: ssm_fetcher.py [-h] [--json] [--profile PROFILE] [--region REGION]
                       ssm_params [ssm_params ...]
 
 SSM Parameter Fetcher
@@ -31,7 +31,10 @@ optional arguments:
   -h, --help            show this help message and exit
   --json, -j            enables json output
   --profile PROFILE, -p PROFILE
-                        aws profile to use
+                        aws profile to use, default "default"
+  --region REGION, -r REGION
+                        aws region to use, default "us-east-1"
+
 ```
 
 ## Examples
@@ -59,6 +62,14 @@ secret-url:
 secret.example.com
 ```
 
+### Fetching one parameter with non-default aws profile from non-default aws region
+
+```
+$ f-ssm secret-url -p boto_profile -r us-west-1
+secret-url:
+secret.example.com
+```
+
 ### Fetching multiple parameters
 ```
 $ f-ssm private-key.pem i-dont-exist website-password
@@ -70,6 +81,3 @@ i-dont-exist:
 website-password:
 Password1234!
 ```
-
-## Future Enhancments
-* Currently fetches secrets from `us-east-1` region only. This needs to be parameterized.

@@ -19,12 +19,18 @@ def arguments():
         type=str,
         nargs='+',
         help='list of ssm parameters')
+    parser.add_argument(
+        '--region',
+        '-r',
+        type=str,
+        default='us-east-1',
+        help='aws region to use')
     args = parser.parse_args()
     return args
 
 
-def ssm_client(profile_name):
-    session = boto3.Session(region_name='us-east-1', profile_name=profile_name)
+def ssm_client(region_name, profile_name):
+    session = boto3.Session(region_name=region_name, profile_name=profile_name)
     ssm = session.client('ssm')
     return ssm
 
@@ -39,7 +45,7 @@ def fetch_ssm(ssm, path):
 
 def main():
     args = arguments()
-    ssm_auth = ssm_client(args.profile)
+    ssm_auth = ssm_client(args.region, args.profile)
     if args.json:
         output = {}
     else:

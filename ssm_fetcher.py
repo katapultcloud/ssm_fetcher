@@ -1,15 +1,35 @@
 import boto3
-import sys
+import argparse
+import json
 
 
-def ssm_client():
-    session = boto3.Session(region_name='us-east-1')
+def arguments():
+    parser = argparse.ArgumentParser(description='SSM Parameter Fetcher')
+    parser.add_argument(
+        '--json', '-j', action='store_true', help='enables json output')
+    parser.add_argument(
+        '--profile',
+        '-p',
+        type=str,
+        default='default',
+        help='aws profile to use')
+    parser.add_argument(
+        'ssm_parameters',
+        metavar='ssm_params',
+        type=str,
+        nargs='+',
+        help='list of ssm parameters')
+    args = parser.parse_args()
+    return args
+
+
+def ssm_client(profile_name):
+    session = boto3.Session(region_name='us-east-1', profile_name=profile_name)
     ssm = session.client('ssm')
     return ssm
 
 
-def fetch_ssm(path):
-    ssm = ssm_client()
+def fetch_ssm(ssm, path):
     try:
         response = ssm.get_parameter(Name=path, WithDecryption=True)
         return response['Parameter']['Value']
@@ -18,10 +38,24 @@ def fetch_ssm(path):
 
 
 def main():
-    for ssm_path in sys.argv[1:]:
-        print(ssm_path + ':\n' + fetch_ssm(ssm_path))
-    return None
+    args = arguments()
+    ssm_auth = ssm_client(args.profile)
+    if args.json:
+        output = {}
+    else:
+        output = ''
+
+    for ssm_parameter in args.ssm_parameters:
+        if args.json:
+            output[ssm_parameter] = fetch_ssm(ssm_auth, ssm_parameter)
+        else:
+            output += ssm_parameter + ':\n' + fetch_ssm(ssm_auth, ssm_parameter) + '\n'
+
+    if args.json:
+        return json.dumps(output)
+    else:
+        return output
 
 
 if __name__ == '__main__':
-    main()
+    print(main())

@@ -12,7 +12,7 @@ def arguments():
         '-p',
         type=str,
         default='default',
-        help='aws profile to use')
+        help='aws profile to use, default "default"')
     parser.add_argument(
         'ssm_parameters',
         metavar='ssm_params',
@@ -24,7 +24,7 @@ def arguments():
         '-r',
         type=str,
         default='us-east-1',
-        help='aws region to use')
+        help='aws region to use, default "us-east-1"')
     args = parser.parse_args()
     return args
 
